@@ -12,7 +12,7 @@ cols =[
       'perc_age_Pre-1919',
       'perc_age_1919-1999',
       'perc_age_Post-1999',
-      'Average Household Size',
+    #   'Average Household Size',
       'HDD',
       'HDD_winter',
       'CDD',
@@ -21,6 +21,8 @@ cols =[
       'perc_asian',
       'Perc_econ_employed',
       'perc_econ_inactive', 
+      'perc_hh_size_small',
+       'perc_hh_size_medium',
       ]
 
 
@@ -92,6 +94,18 @@ def eth_setting():
     names = ['perc_white', 'perc_black', 'perc_asian', 'perc_asian', 'perc_ethnic_other', 'perc_mixed']
     return list_cols , names  
 
+def hh_size_setting():
+    small = ['household_siz_perc_perc_0 people in household',
+    'household_siz_perc_perc_1 person in household',] , 
+    medium = ['household_siz_perc_perc_2 people in household',
+    'household_siz_perc_perc_3 people in household',
+    'household_siz_perc_perc_4 people in household'] 
+    large = ['household_siz_perc_perc_5 people in household',
+    'household_siz_perc_perc_6 people in household',
+    'household_siz_perc_perc_7 people in household']
+    list_cols = [small, medium, large]
+    names = ['perc_hh_size_small', 'perc_hh_size_medium', 'perc_hh_size_large']
+    return list_cols, names
 
 def type_setting1():
     large = ['Very large detached', 'Large detached','Large semi detached' ,  'Tall terraces 3-4 storeys']
@@ -122,6 +136,7 @@ def pre_process_pc(data):
     age_cols, age_names = age_setting1() 
     eth_cols, eth_name = eth_setting() 
     econ_cols , econ_names = econ_settings()
+    hh_size_cols, hh_size_names = hh_size_setting()
 
     for i in range (len(type_cols)):
         typ = [x +'_pct' for x in type_cols[i] ]
@@ -138,5 +153,8 @@ def pre_process_pc(data):
 
     for i in range (len(econ_cols)):
         data[econ_names[i]] = data[econ_cols[i] ].fillna(0).sum(axis=1)
+
+    for i in range (len(hh_size_cols)):
+        data[hh_size_names[i]] = data[hh_size_cols[i] ].fillna(0).sum(axis=1)
 
     return data 
