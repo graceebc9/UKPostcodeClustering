@@ -31,6 +31,9 @@ def load_and_prepare_postcode_data( data,  subset=None):
     # data = pd.read_csv(input_path)
     data = pre_process_pc(data)
     X = data[cols].copy() 
+    print('X shape: ', X.shape)
+    X = X.dropna()
+    print('X shape: ', X.shape) 
     data_cols = X.columns.tolist()
     if subset is None:
         return  X, data_cols
@@ -95,11 +98,9 @@ def eth_setting():
     return list_cols , names  
 
 def hh_size_setting():
-    small = ['household_siz_perc_perc_0 people in household',
-    'household_siz_perc_perc_1 person in household',] , 
-    medium = ['household_siz_perc_perc_2 people in household',
-    'household_siz_perc_perc_3 people in household',
-    'household_siz_perc_perc_4 people in household'] 
+    small = ['household_siz_perc_perc_0 people in household','household_siz_perc_perc_1 person in household']
+    medium = ['household_siz_perc_perc_2 people in household', 'household_siz_perc_perc_3 people in household',
+     'household_siz_perc_perc_4 people in household'] 
     large = ['household_siz_perc_perc_5 people in household',
     'household_siz_perc_perc_6 people in household',
     'household_siz_perc_perc_7 people in household']
@@ -131,30 +132,68 @@ def age_setting1():
     return  age_cols, age_names 
 
 
+# def pre_process_pc(data):
+#     type_cols, type_names = type_setting1() 
+#     age_cols, age_names = age_setting1() 
+#     eth_cols, eth_name = eth_setting() 
+#     econ_cols , econ_names = econ_settings()
+#     hh_size_cols, hh_size_names = hh_size_setting()
+
+#     for i in range (len(type_cols)):
+#         typ = [x +'_pct' for x in type_cols[i] ]
+#         data[type_names[i]] = data[typ ].fillna(0).sum(axis=1)
+
+#     for i in range (len(age_cols)):
+#         age = [x +'_pct' for x in age_cols[i] ]
+#         data[age_names[i]] = data[age ].fillna(0).sum(axis=1)
+
+
+#     for i in range (len(eth_cols)):
+#         data[eth_name[i]] = data[eth_cols[i] ].fillna(0).sum(axis=1)
+
+#     for i in range (len(econ_cols)):
+#         data[econ_names[i]] = data[econ_cols[i] ].fillna(0).sum(axis=1)
+
+#     for i in range (len(hh_size_cols)):
+#         data[hh_size_names[i]] = data[hh_size_cols[i] ].fillna(0).sum(axis=1)
+
+#     # return data 
+
+import pandas as pd
+import numpy as np
+
+def optimize_preprocessing(data):
+    # Pre-calculate all column mappings
+    column_mappings = {
+        'type': (type_setting1(), lambda x: x + '_pct'),
+        'age': (age_setting1(), lambda x: x + '_pct'),
+        'eth': (eth_setting(), lambda x: x),
+        'econ': (econ_settings(), lambda x: x),
+        'hh_size': (hh_size_setting(), lambda x: x)
+    }
+    
+    # Vectorized operations instead of loops
+    def process_columns(columns, names, transform_fn):
+        # Create all column lists at once
+        all_cols = [[transform_fn(x) for x in col_group] for col_group in columns]
+        
+        # Perform vectorized operations
+        results = pd.DataFrame({
+            name: data[cols].fillna(0).sum(axis=1) 
+            for name, cols in zip(names, all_cols)
+        })
+        
+        return results
+    
+    # Process all categories at once
+    results = []
+    for (columns, names), transform_fn in column_mappings.values():
+        results.append(process_columns(columns, names, transform_fn))
+    
+    # Combine results efficiently
+    return pd.concat([data] + results, axis=1)
+
+# Modified function calls
 def pre_process_pc(data):
-    type_cols, type_names = type_setting1() 
-    age_cols, age_names = age_setting1() 
-    eth_cols, eth_name = eth_setting() 
-    econ_cols , econ_names = econ_settings()
-    hh_size_cols, hh_size_names = hh_size_setting()
-
-    for i in range (len(type_cols)):
-        typ = [x +'_pct' for x in type_cols[i] ]
-        data[type_names[i]] = data[typ ].fillna(0).sum(axis=1)
-
-    for i in range (len(age_cols)):
-        age = [x +'_pct' for x in age_cols[i] ]
-        data[age_names[i]] = data[age ].fillna(0).sum(axis=1)
-
-
-    for i in range (len(eth_cols)):
-        data[eth_name[i]] = data[eth_cols[i] ].fillna(0).sum(axis=1)
-
-
-    for i in range (len(econ_cols)):
-        data[econ_names[i]] = data[econ_cols[i] ].fillna(0).sum(axis=1)
-
-    for i in range (len(hh_size_cols)):
-        data[hh_size_names[i]] = data[hh_size_cols[i] ].fillna(0).sum(axis=1)
-
+    data =  optimize_preprocessing(data)
     return data 

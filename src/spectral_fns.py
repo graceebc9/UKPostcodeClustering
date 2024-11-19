@@ -192,24 +192,18 @@ def run_cluster(output_path, input_path,  X_train, data_cols, num_clusters, nrs,
     dataset_name = os.path.basename(input_path).split('_')[0]
     run_name = dataset_name
     
-    try:
-        # Load and prepare data
-        # X_train, data_cols = load_and_prepare_postcode_data( input_df,  subset)
 
-        # Run clustering
-        model, scaler, pca, labels, X_principal, silhouette_avg, davies_bouldin, calinski_harabasz = train_clustering_model(
-            X_train, num_clusters, algorithm=algorithm, affinity=affinity, linkage=linkage, 
-            metric=metric, norm=norm,   random_state=nrs, n_init=n_init
-        )
+    # Run clustering
+    model, scaler, pca, labels, X_principal, silhouette_avg, davies_bouldin, calinski_harabasz = train_clustering_model(
+        X_train, num_clusters, algorithm=algorithm, affinity=affinity, linkage=linkage, 
+        metric=metric, norm=norm,   random_state=nrs, n_init=n_init
+    )
 
-        # Save results
-        save_results_full(output_path, run_name, model, scaler, pca, labels, X_principal, 
-                          silhouette_avg, davies_bouldin, calinski_harabasz)
+    # Save results
+    save_results_full(output_path, run_name, model, scaler, pca, labels, X_principal, 
+                        silhouette_avg, davies_bouldin, calinski_harabasz)
 
-        # Plot variable distributions
-        plot_variable_distributions(X_train, labels, os.path.join(output_path, run_name), data_cols)
+    # Plot variable distributions
+    plot_variable_distributions(X_train, labels, os.path.join(output_path, run_name), data_cols)
 
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
- 
 
