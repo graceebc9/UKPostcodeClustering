@@ -178,7 +178,7 @@ def save_labels(output_path, labels , silhouette_avg, davies_bouldin, calinski_h
     
     
 
-def run_cluster(output_path, input_path, num_clusters, nrs, algorithm='kmeans', affinity='rbf', 
+def run_cluster(output_path, input_path, input_df, num_clusters, nrs, algorithm='kmeans', affinity='rbf', 
                 linkage='ward', metric='euclidean', norm=True, n_init=10, subset=None):
     print('subset: ', subset)
     # Set random seed
@@ -194,7 +194,7 @@ def run_cluster(output_path, input_path, num_clusters, nrs, algorithm='kmeans', 
     
     try:
         # Load and prepare data
-        X_train, data_cols = load_and_prepare_postcode_data(input_path, subset)
+        X_train, data_cols = load_and_prepare_postcode_data( input_df,  subset)
 
         # Run clustering
         model, scaler, pca, labels, X_principal, silhouette_avg, davies_bouldin, calinski_harabasz = train_clustering_model(

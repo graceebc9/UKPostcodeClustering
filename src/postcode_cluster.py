@@ -24,9 +24,9 @@ cols =[
       ]
 
 
-def load_and_prepare_postcode_data(input_path, subset=None):
+def load_and_prepare_postcode_data( data,  subset=None):
     logging.info('Load postcode data and aggregate variables')
-    data = pd.read_csv(input_path)
+    # data = pd.read_csv(input_path)
     data = pre_process_pc(data)
     X = data[cols].copy() 
     data_cols = X.columns.tolist()
