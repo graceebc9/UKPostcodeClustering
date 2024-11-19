@@ -4,17 +4,16 @@ import pandas as pd
 import itertools
 import os 
 
-output_path = '/Users/gracecolverd/postcode_clustering/results' 
-input_path = "/Users/gracecolverd/City_clustering/notebooks/clean_v1_round2_secondfilter.csv" 
+output_path = '/Users/gracecolverd/postcode_clustering/results_mixeddata' 
+# input_path = "/Users/gracecolverd/City_clustering/notebooks/clean_v1_round2_secondfilter.csv" 
+input_path='/Volumes/T9/2024_Data_downloads/new-data-outputs/ml_input/final_V3_ml_incmixed.csv'
+list_clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+# list_clusters = [12, 13, 14, 15, 16, 17, 18, 19, 20]
+# list_clusters = [7,8,9,10,11,12,13]
 
-# list_clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-list_clusters = [12, 13, 14, 15, 16, 17, 18, 19, 20]
-list_clusters = [7,8,9,10,11,12,13]
-
-list_clusters = [17,18,19, 20,21,22,23,24,25,26]
+# list_clusters = [17,18,19, 20,21,22,23,24,25,26]
 nrs = 1
-subset=None
-# subset=100000
+subset=10000
 output_path = os.path.join(output_path, f'subset_{subset}')
 
 run_gmm= True 
